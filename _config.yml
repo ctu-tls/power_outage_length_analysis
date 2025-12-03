@@ -1,0 +1,15 @@
+remote_theme: pages-themes/cayman@v0.2.0
+plugins:
+- jekyll-remote-theme # add this line to the plugins list if you already have one
+
+title: Power Outage Length Analysis Based on Type of Cause
+description: Claire Tu and Po-Hua Chen (Brian Chen)n, analysis on Power Outage length based on their cause, using Power Outage Dataset.
+
+
+show_downloads: false
+google_analytics: [Your Google Analytics tracking ID]
+
+
+
+
+
