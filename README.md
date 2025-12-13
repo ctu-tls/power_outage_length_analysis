@@ -44,7 +44,6 @@ This bar chart shows the frequency of each type of outage, with severe weather b
 We first looked at the distribution of outage duration to understand typical outage lengths and whether there are heavy tails/outliers.
 
 Interactive plot: Distribution of Outage Duration
-[TODO: export Plotly HTML to assets/univariate_outage_duration.html and embed below]
 <iframe src="assets/univariate_outage_duration.html" width="100%" height="520" style="border:none;"></iframe>
 We also examined the frequency of different outage causes.
 
@@ -55,7 +54,6 @@ Static summary (cause frequency)
 Next, we explored whether outage duration changes with the scale of impact.
 
 Interactive plot (Plotly): Customers Affected vs. Outage Duration
-[TODO: export Plotly HTML to assets/bivariate_customers_vs_duration.html and embed below]
 <iframe src="assets/bivariate_customers_vs_duration.html" width="100%" height="520" style="border:none;"></iframe>
 [TODO: Add 1–2 sentences interpreting the relationship (trend? noisy? outliers?).]
 
@@ -138,35 +136,38 @@ Do outages caused by **severe weather** tend to have different average duration 
 
 Because **p = 0.0002 < 0.05**, we **reject H0**. In other words, outage duration is **not** the same between severe-weather outages and non-severe-weather outages in our dataset; severe weather outages tend to have a meaningfully different average duration.
 
-[TODO: IMPORTANT FIX]
-Make sure your “natural vs human” mapping is clearly defined and defensible. If you only treat severe weather as natural, state that explicitly and consider re-framing as “severe weather vs non-severe weather” to avoid overclaiming.
 
-
-### Framing a Prediction Problem
+## Framing a Prediction Problem
 
 We frame a regression task to predict:
 Response variable (y): OUTAGE.DURATION (minutes)
 We evaluate performance using:
 Metric: MAE (Mean Absolute Error), because it measures average absolute prediction error in minutes and is more interpretable than squared-error metrics.
 
-Time of prediction
-[TODO: Explicitly state what is known at prediction time and justify why CAUSE.CATEGORY and CUSTOMERS.AFFECTED are available (or revise features if they are not).]
+### Time of prediction
+We assume the prediction is made **at the start of an outage event**, right after it is reported. At that time, we can reasonably know the **when/where** information (e.g., `YEAR`, `MONTH`, `U.S._STATE`, `NERC.REGION`, `CLIMATE.REGION`, `OUTAGE.START.DATE`, `OUTAGE.START.TIME`) and the **broad cause label** `CAUSE.CATEGORY`, since these are typically recorded during initial reporting. 
+
+However, we did **not** assume that post-event outcomes are known at prediction time (for example, fields that depend on how the outage unfolds). Therefore, our features focus on information that would plausibly be available early in the event, and the response `OUTAGE.DURATION` is treated as unknown and what we aim to predict.
+
+
 ### Baseline Model
 ##### Features
 
 Quantitative: CUSTOMERS.AFFECTE
-Categorical: CAUSE.CATEGORY (one-hot encoded)
+Categorical: CAUSE.CATEGORY (one-hot encoded)## Baseline Model
 
-##### Model
-Pipeline with ColumnTransformer + OneHotEncoder + LinearRegression
+### Features
+- Quantitative: `CUSTOMERS.AFFECTED`
+- Categorical: `CAUSE.CATEGORY` (one-hot encoded)
 
-##### Performance
+### Model
+We use a Pipeline with a `ColumnTransformer` to impute missing values, one-hot encode the categorical feature, and then fit a `LinearRegression` model.
 
-Baseline MAE: [TODO: paste the exact number you got]
+### Performance
+Baseline test MAE: **2472.27** minutes.
 
-##### Interpretation
-
-[TODO: 2–4 sentences—Is MAE “good”? What kinds of errors do you see? Any limitations of using only these two features?]
+### Interpretation
+Our baseline MAE is **2472.27 minutes**, meaning our predictions are off by about **2,472 minutes** on average. That’s pretty large, which tells us that outage duration varies a lot and can’t be explained well with only `CUSTOMERS.AFFECTED` and the broad `CAUSE.CATEGORY`. This baseline is mainly a reference point, it ignores where the outage happens , when it happens, and more detailed cause information, which are all likely related to restoration time.
 
 
 ### Final Model
