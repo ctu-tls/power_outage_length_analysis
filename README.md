@@ -51,8 +51,9 @@ Next, we explored whether outage duration changes with the scale of impact.
 <iframe src="assets/bivariate_customers_vs_duration.html" width="100%" height="520" style="border:none;"></iframe>
 
 ### Aggregates (grouped / pivot table)
+This pivot table shows the median duration of outages for each cause, sorted from largest to smallest. The results show that fuel supply emergency and severe weather have longer typical outages, while intentional attack has shorter outages, and the median avoids skewing the average.
 
-<iframe src="assets/interesting_agg.png" width="100%" height="520"></iframe>
+<iframe src="assets/interesting_agg.png" width="50%" height="520"></iframe>
 
 
 
