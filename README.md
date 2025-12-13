@@ -43,7 +43,6 @@ This bar chart shows the frequency of each type of outage, with severe weather b
 ### Univariate Analysis (one-variable)
 We first looked at the distribution of outage duration to understand typical outage lengths and whether there are heavy tails/outliers.
 
-Interactive plot: Distribution of Outage Duration
 <iframe src="assets/univariate_outage_duration.html" width="100%" height="520" style="border:none;"></iframe>
 
 ### Bivariate Analysis (two-variable)
@@ -127,9 +126,9 @@ Because **p = 0.0002 < 0.05**, we **reject H0**. In other words, outage duration
 
 ## Framing a Prediction Problem
 
-We frame a regression task to predict:
-Response variable (y): OUTAGE.DURATION (minutes)
-We evaluate performance using:
+We frame a regression task to predict: <br>
+Response variable (y): OUTAGE.DURATION (minutes) <br>
+We evaluate performance using:<br>
 Metric: MAE (Mean Absolute Error), because it measures average absolute prediction error in minutes and is more interpretable than squared-error metrics.
 
 ### Time of prediction
@@ -137,12 +136,6 @@ We assume the prediction is made **at the start of an outage event**, right afte
 
 However, we did **not** assume that post-event outcomes are known at prediction time (for example, fields that depend on how the outage unfolds). Therefore, our features focus on information that would plausibly be available early in the event, and the response `OUTAGE.DURATION` is treated as unknown and what we aim to predict.
 
-
-### Baseline Model
-##### Features
-
-Quantitative: CUSTOMERS.AFFECTE
-Categorical: CAUSE.CATEGORY (one-hot encoded)
 
 ## Baseline Model
 
