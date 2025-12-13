@@ -52,8 +52,8 @@ Next, we explored whether outage duration changes with the scale of impact.
 
 ### Aggregates (grouped / pivot table)
 
-[TODO: paste the markdown table generated from your pivot/groupby result]
-[TODO: Insert df.to_markdown(index=False) output here]
+<iframe src="assets/interesting_agg.png" width="100%" height="520"></iframe>
+
 
 
 ## Assessment of Missingness
