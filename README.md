@@ -127,9 +127,9 @@ Because **p = 0.0002 < 0.05**, we **reject H0**. In other words, outage duration
 ## Framing a Prediction Problem
 
 We frame a regression task to predict: <br>
-Response variable (y): OUTAGE.DURATION (minutes) <br>
+**Response variable (y)**: `OUTAGE.DURATION` (minutes) <br>
 We evaluate performance using:<br>
-Metric: MAE (Mean Absolute Error), because it measures average absolute prediction error in minutes and is more interpretable than squared-error metrics.
+**Metric**: **MAE** (Mean Absolute Error), because it measures average absolute prediction error in minutes and is more interpretable than squared-error metrics.
 
 ### Time of prediction
 We assume the prediction is made **at the start of an outage event**, right after it is reported. At that time, we can reasonably know the **when/where** information (e.g., `YEAR`, `MONTH`, `U.S._STATE`, `NERC.REGION`, `CLIMATE.REGION`, `OUTAGE.START.DATE`, `OUTAGE.START.TIME`) and the **broad cause label** `CAUSE.CATEGORY`, since these are typically recorded during initial reporting. 
