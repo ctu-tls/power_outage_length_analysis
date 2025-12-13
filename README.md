@@ -36,6 +36,10 @@ We performed several cleaning steps to prepare the dataset for analysis:
 
 [TODO: briefly mention how missing values were handled in key columns (e.g., OUTAGE.DURATION, CUSTOMERS.AFFECTED, CAUSE.CATEGORY).]
 
+### Distribution of cause categories
+This bar chart shows the frequency of each type of outage, with severe weather being the most frequent, followed by human-caused outages such as intentional attacks. Because weather-related events account for a large share of all outages, it is natural to compare the durations of natural and human-caused outages in later sections.
+<iframe src="assets/distribution_cause_category.html" width="100%" height="520" style="border:none;"></iframe>
+
 ### Univariate Analysis (one-variable)
 We first looked at the distribution of outage duration to understand typical outage lengths and whether there are heavy tails/outliers.
 
