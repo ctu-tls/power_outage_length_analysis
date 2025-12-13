@@ -1,6 +1,6 @@
 # Power Outage Length Analysis Based on Type of Cause
 by Claire Tu (c7tu@ucsd.edu) and Po-Hua Chen (poc008@ucsd.edu)
-[Website Link]([/guides/content/editing-an-existing-page](https://ctu-tls.github.io/power_outage_length_analysis/))
+[Website Link](https://ctu-tls.github.io/power_outage_length_analysis/))
 
 ## Introduction
 
