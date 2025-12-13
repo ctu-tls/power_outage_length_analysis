@@ -34,7 +34,7 @@ We performed several cleaning steps to prepare the dataset for analysis:
 3. Converted numeric-like columns (e.g., outage duration, customers affected) to numeric dtype and handled non-numeric entries.
 4. Focused on columns needed for EDA and modeling.
 
-We handled missingness in two stages. First, we coerced numeric-like columns (e.g., OUTAGE.DURATION, CUSTOMERS.AFFECTED) to numeric using errors="coerce", so any non-numeric entries become NaN. Then, for each analysis/visualization, we used listwise deletion only on the variables needed: for example, the duration histogram drops rows missing OUTAGE.DURATION, and the scatter plot drops rows missing either OUTAGE.DURATION or CUSTOMERS.AFFECTED. For inference and modeling steps that require the cause label, we restricted to rows with non-missing CAUSE.CATEGORY (and non-missing target OUTAGE.DURATION when applicable), so results are based on comparable, well-defined subsets rather than mixing missing categories.
+We handled missingness in two stages. First, we coerced numeric-like columns to numeric using errors="coerce", so any non-numeric entries become NaN. Then, for each analysis/visualization, we used listwise deletion only on the variables needed. For inference and modeling steps that require the cause label, we restricted to rows with non-missing CAUSE.CATEGORY, so results are based on comparable subsets rather than mixing missing categories.
 
 ### Distribution of Cause Categories
 This bar chart shows the frequency of each type of outage, with severe weather being the most frequent, followed by human-caused outages such as intentional attacks. Because weather-related events account for a large share of all outages, it is natural to compare the durations of natural and human-caused outages in later sections.
@@ -45,25 +45,17 @@ We first looked at the distribution of outage duration to understand typical out
 
 Interactive plot: Distribution of Outage Duration
 <iframe src="assets/univariate_outage_duration.html" width="100%" height="520" style="border:none;"></iframe>
-We also examined the frequency of different outage causes.
-
-Static summary (cause frequency)
-[TODO: short written summary of most common CAUSE.CATEGORY values.]
 
 ### Bivariate Analysis (two-variable)
 Next, we explored whether outage duration changes with the scale of impact.
 
-Interactive plot (Plotly): Customers Affected vs. Outage Duration
 <iframe src="assets/bivariate_customers_vs_duration.html" width="100%" height="520" style="border:none;"></iframe>
-[TODO: Add 1–2 sentences interpreting the relationship (trend? noisy? outliers?).]
 
 ### Aggregates (grouped / pivot table)
 
-To connect outage duration with cause, we computed an aggregate table of median outage duration by CAUSE.CATEGORY.
 [TODO: paste the markdown table generated from your pivot/groupby result]
 [TODO: Insert df.to_markdown(index=False) output here]
 
-[TODO: 2–3 sentence interpretation: which causes tend to have longer median durations, and why that might make sense.]
 
 ## Assessment of Missingness
 
@@ -101,7 +93,6 @@ Test 2: Does missingness depend on CAUSE.CATEGORY (Y)?
 - α: 0.05 <br>
 **Conclusion**: Reject H0 → missingness of CAUSE.CATEGORY.DETAIL does depend on CAUSE.CATEGORY (so it is not MCAR relative to this column).
 
-Interactive plot (Plotly) related to missingness
 <iframe src="assets/missingness_dep_on_cause_category.html" width="100%" height="520" style="border:none;"></iframe>
 
 From the plot, the distribution of `CAUSE.CATEGORY` differs noticeably between rows where `CAUSE.CATEGORY.DETAIL` is missing vs not missing (some categories become much more/less common when the detail field is missing). This visual pattern is consistent with our permutation test result (large TVD and very small p-value), supporting the conclusion that the missingness of `CAUSE.CATEGORY.DETAIL` depends on `CAUSE.CATEGORY`.
@@ -120,17 +111,14 @@ Do outages caused by **severe weather** tend to have different average duration 
   - Group A = outages with `CAUSE.CATEGORY == "severe weather"`  
   - Group B = outages with `CAUSE.CATEGORY != "severe weather"`
 - **Test statistic:** difference in mean outage duration  
-  \[
-  \Delta = \bar{D}_{A} - \bar{D}_{B}
-  \]
 - **Method:** permutation test (shuffle group labels)
 - **Repetitions (reps):** **5000**
-- **Significance level (α):** **0.05**
+- **Significance level (α):** **0.05**  
 
 ### Results
 - **Observed difference in means (Δ):** **[PASTE_YOUR_OBSERVED_DIFF_HERE]**
 - **p-value:** **0.0002**
-
+ 
 
 ### Conclusion
 
