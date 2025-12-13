@@ -34,16 +34,16 @@ We performed several cleaning steps to prepare the dataset for analysis:
 3. Converted numeric-like columns (e.g., outage duration, customers affected) to numeric dtype and handled non-numeric entries.
 4. Focused on columns needed for EDA and modeling.
 
-[TODO: briefly mention how missing values were handled in key columns (e.g., OUTAGE.DURATION, CUSTOMERS.AFFECTED, CAUSE.CATEGORY).]
+We handled missingness in two stages. First, we coerced numeric-like columns (e.g., OUTAGE.DURATION, CUSTOMERS.AFFECTED) to numeric using errors="coerce", so any non-numeric entries become NaN. Then, for each analysis/visualization, we used listwise deletion only on the variables needed: for example, the duration histogram drops rows missing OUTAGE.DURATION, and the scatter plot drops rows missing either OUTAGE.DURATION or CUSTOMERS.AFFECTED. For inference and modeling steps that require the cause label, we restricted to rows with non-missing CAUSE.CATEGORY (and non-missing target OUTAGE.DURATION when applicable), so results are based on comparable, well-defined subsets rather than mixing missing categories.
 
-### Distribution of cause categories
+### Distribution of Cause Categories
 This bar chart shows the frequency of each type of outage, with severe weather being the most frequent, followed by human-caused outages such as intentional attacks. Because weather-related events account for a large share of all outages, it is natural to compare the durations of natural and human-caused outages in later sections.
 <iframe src="assets/distribution_cause_category.html" width="100%" height="520" style="border:none;"></iframe>
 
 ### Univariate Analysis (one-variable)
 We first looked at the distribution of outage duration to understand typical outage lengths and whether there are heavy tails/outliers.
 
-Interactive plot (Plotly): Distribution of Outage Duration
+Interactive plot: Distribution of Outage Duration
 [TODO: export Plotly HTML to assets/univariate_outage_duration.html and embed below]
 <iframe src="assets/univariate_outage_duration.html" width="100%" height="520" style="border:none;"></iframe>
 We also examined the frequency of different outage causes.
@@ -77,11 +77,11 @@ In the dataset, `CUSTOMERS.AFFECTED` is classified as NMAR (Not Missing At Rando
 Observation of the data shows that `CUSTOMERS.AFFECTED` has a high missing rate, and the median of `OUTAGE.DURATION` is lower when the data is missing and higher when it is not, which is consistent with the idea that small-scale outages are more likely to be missed. However, NMAR cannot be statistically validated using observed data alone, and determining whether the missingness is truly NMAR would require the utility company’s internal reporting policies and omission thresholds.
 
 ### Missingness Dependency Tests (Permutation Tests)
-We investigated whether the missingness of a chosen column X depends on other variables.
+We analyze the missingness of:
 
-Column with substantial missingness (X): `OUTAGE.CATEGORY.DETAILS` <br>
-A column Y that missingness does depend on: `OUTAGE.CATEGORY` <br>
-A column Z that missingness does not depend on: `ANOMALY.LEVEL` <br>
+- **X** = `CAUSE.CATEGORY.DETAIL` (the column with non-trivial missingness)
+- **Y** = `CAUSE.CATEGORY` (a column that X’s missingness *does* depend on)
+- **Z** = `ANOMALY.LEVEL` (a column that X’s missingness *does not* depend on)
 
 Test 1: Does missingness depend on ANOMALY.LEVEL (Z)?
 
@@ -106,27 +106,37 @@ Test 2: Does missingness depend on CAUSE.CATEGORY (Y)?
 Interactive plot (Plotly) related to missingness
 <iframe src="assets/missingness_dep_on_cause_category.html" width="100%" height="520" style="border:none;"></iframe>
 
+From the plot, the distribution of `CAUSE.CATEGORY` differs noticeably between rows where `CAUSE.CATEGORY.DETAIL` is missing vs not missing (some categories become much more/less common when the detail field is missing). This visual pattern is consistent with our permutation test result (large TVD and very small p-value), supporting the conclusion that the missingness of `CAUSE.CATEGORY.DETAIL` depends on `CAUSE.CATEGORY`.
+
 
 ## Hypothesis Testing
 ### Question
-
-Do outages caused by “natural causes” have different average duration than outages caused by “human-related causes”?
+Do outages caused by **severe weather** tend to have different average duration than outages caused by **non-severe weather**?
 
 ### Hypotheses
-
-H0: The average outage duration is the same for natural vs. human-caused outages.
-H1: The average outage duration differs between natural vs. human-caused outages.
+- **H0:** The average outage duration is the same for severe weather outages and non-severe weather outages.
+- **H1:** The average outage duration differs between severe weather outages and non-severe weather outages.
 
 ### Test Setup
+- **Groups:**  
+  - Group A = outages with `CAUSE.CATEGORY == "severe weather"`  
+  - Group B = outages with `CAUSE.CATEGORY != "severe weather"`
+- **Test statistic:** difference in mean outage duration  
+  \[
+  \Delta = \bar{D}_{A} - \bar{D}_{B}
+  \]
+- **Method:** permutation test (shuffle group labels)
+- **Repetitions (reps):** **5000**
+- **Significance level (α):** **0.05**
 
-Test statistic: difference in means (natural mean − human mean)
-Method: permutation test
-Significance level (alpha): 0.05
-Result: [TODO: ensure reps / p-value match your notebook exactly]
+### Results
+- **Observed difference in means (Δ):** **[PASTE_YOUR_OBSERVED_DIFF_HERE]**
+- **p-value:** **0.0002**
+
 
 ### Conclusion
 
-[TODO: short conclusion sentence + interpret in plain language.]
+Because **p = 0.0002 < 0.05**, we **reject H0**. In other words, outage duration is **not** the same between severe-weather outages and non-severe-weather outages in our dataset; severe weather outages tend to have a meaningfully different average duration.
 
 [TODO: IMPORTANT FIX]
 Make sure your “natural vs human” mapping is clearly defined and defensible. If you only treat severe weather as natural, state that explicitly and consider re-framing as “severe weather vs non-severe weather” to avoid overclaiming.
