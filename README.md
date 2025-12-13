@@ -87,7 +87,6 @@ Interactive plot (Plotly) related to missingness
 <iframe src="assets/missingness_dep_on_cause_category.html" width="100%" height="520" style="border:none;"></iframe>
 
 
-
 ## Hypothesis Testing
 ### Question
 
