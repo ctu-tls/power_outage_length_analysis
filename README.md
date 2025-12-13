@@ -53,7 +53,7 @@ Next, we explored whether outage duration changes with the scale of impact.
 ### Aggregates (grouped / pivot table)
 This pivot table shows the median duration of outages for each cause, sorted from largest to smallest. The results show that fuel supply emergency and severe weather have longer typical outages, while intentional attack has shorter outages, and the median avoids skewing the average.
 
-<iframe frameborder='0' scrolling='no' src="assets/interesting_agg.png" height='300px' width='400px'></iframe>
+<iframe frameborder='0' scrolling='no' src="assets/interesting_agg.png" width="100%" height="520"></iframe>
 
 
 
@@ -189,9 +189,12 @@ This is an improvement of about **32 minutes lower MAE** (≈ **1.29%** better).
 
 ## Fairness Analysis
 
-[TODO: Implement fairness analysis]
-Requirements to satisfy:
-Pick two groups (Group X / Group Y) based on a sensible attribute (e.g., CLIMATE.REGION, NERC.REGION, or state categories)
-Compare model performance (e.g., MAE) across groups using the final model
-Use a permutation test on the difference in metrics
-Report H0/H1/test statistic/alpha/p-value/conclusion
+We use `CAUSE.CATEGORY` to split the data into two groups (natural and non-natural).
+
+The evaluation metric used is MAE, and the test is defined as the difference in MAE between the two groups:  
+(MAE natural - MAE non-nature)
+
+`H0`: model performance is the same.  
+`H1`: The performance of the two groups is different.
+
+We calculate the observed MAE difference on the test set and use a permutation test to randomly shuffle the group labels multiple times to create a null distribution and compute the two-sided p-value. The resulting p-value is approximately 0.1615, which is greater than the commonly used significance level of 0.05, so we fail to reject H0. Therefore, there is not enough evidence to show a significant difference between the model’s prediction errors for the natural and non-natural groups.
