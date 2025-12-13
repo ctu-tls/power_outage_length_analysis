@@ -76,14 +76,31 @@ Example template: “We suspect ____ may be NMAR because ____ would make missing
 ### Missingness Dependency Tests (Permutation Tests)
 We investigated whether the missingness of a chosen column X depends on other variables.
 
-Column with substantial missingness (X): [TODO]
-A column Y that missingness does depend on: [TODO]
-A column Z that missingness does not depend on: [TODO]
+Column with substantial missingness (X): `OUTAGE.CATEGORY.DETAILS`
+A column Y that missingness does depend on: `OUTAGE.CATEGORY`
+A column Z that missingness does not depend on: `ANOMALY.LEVEL`
 
-[TODO: Write your H0/H1, test statistic, alpha, p-value, and conclusion for both tests.]
+Test 1: Does missingness depend on ANOMALY.LEVEL (Z)?
+
+H0: Missingness of CAUSE.CATEGORY.DETAIL is independent of ANOMALY.LEVEL.
+H1: Missingness of CAUSE.CATEGORY.DETAIL depends on ANOMALY.LEVEL.
+Test stat: ∣mean (ANOMALY.LEVEL∣ 𝑋 missing ) − mean (ANOMALY.LEVEL∣ 𝑋 not missing )∣
+Observed stat: 0.0105
+p-value: 0.794
+α: 0.05
+**Conclusion**: Fail to reject H0 → we do not find evidence that missingness depends on ANOMALY.LEVEL.
+
+Test 2: Does missingness depend on CAUSE.CATEGORY (Y)?
+
+H0: Missingness of CAUSE.CATEGORY.DETAIL is independent of CAUSE.CATEGORY.
+H1: Missingness of CAUSE.CATEGORY.DETAIL depends on CAUSE.CATEGORY.
+Test statistic: TVD between the distribution of CAUSE.CATEGORY when CAUSE.CATEGORY.DETAIL is missing vs not missing
+Observed stat (TVD): 0.4107
+p-value: 0.0001
+α: 0.05
+**Conclusion**: Reject H0 → missingness of CAUSE.CATEGORY.DETAIL does depend on CAUSE.CATEGORY (so it is not MCAR relative to this column).
 
 Interactive plot (Plotly) related to missingness
-[TODO: export Plotly HTML to assets/missingness_plot.html and embed below]
 <iframe src="assets/missingness_dep_on_cause_category.html" width="100%" height="520" style="border:none;"></iframe>
 
 
