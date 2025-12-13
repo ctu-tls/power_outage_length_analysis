@@ -70,8 +70,11 @@ To connect outage duration with cause, we computed an aggregate table of median 
 ## Assessment of Missingness
 
 ### NMAR Discussion
-[TODO: Choose one column that could be NMAR and explain why using a plausible data-generating process.
-Example template: “We suspect ____ may be NMAR because ____ would make missingness more likely when ____.”]
+We suspect `CUSTOMERS.AFFECTED` may be NMAR because small-scale outages that affect very few customers are less likely to be fully documented or may be omitted during data collection, making missingness more likely when the true number of affected customers is very small.
+
+In the dataset, `CUSTOMERS.AFFECTED` is classified as NMAR (Not Missing At Random). When the number of people affected by a small outage is very small, it may be less likely to be fully documented or may be omitted. In other words, whether the data is missing may depend on the true but unobserved value of `CUSTOMERS.AFFECTED` itself, which is consistent with the definition and intuition of NMAR.
+
+Observation of the data shows that `CUSTOMERS.AFFECTED` has a high missing rate, and the median of `OUTAGE.DURATION` is lower when the data is missing and higher when it is not, which is consistent with the idea that small-scale outages are more likely to be missed. However, NMAR cannot be statistically validated using observed data alone, and determining whether the missingness is truly NMAR would require the utility company’s internal reporting policies and omission thresholds.
 
 ### Missingness Dependency Tests (Permutation Tests)
 We investigated whether the missingness of a chosen column X depends on other variables.
