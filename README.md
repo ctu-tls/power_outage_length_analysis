@@ -198,3 +198,6 @@ The evaluation metric used is MAE, and the test is defined as the difference in 
 `H1`: The performance of the two groups is different.
 
 We calculate the observed MAE difference on the test set and use a permutation test to randomly shuffle the group labels multiple times to create a null distribution and compute the two-sided p-value. The resulting p-value is approximately 0.1615, which is greater than the commonly used significance level of 0.05, so we fail to reject H0. Therefore, there is not enough evidence to show a significant difference between the model’s prediction errors for the natural and non-natural groups.
+
+<iframe frameborder='0' scrolling='no' src="assets/Fairness_Analysis .png" width="100%" height="520"></iframe>
+
