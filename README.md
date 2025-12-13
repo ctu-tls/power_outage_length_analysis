@@ -160,16 +160,9 @@ Baseline test MAE: **2472.27** minutes.
 Our baseline MAE is **2472.27 minutes**, meaning our predictions are off by about **2,472 minutes** on average. That’s pretty large, which tells us that outage duration varies a lot and can’t be explained well with only `CUSTOMERS.AFFECTED` and the broad `CAUSE.CATEGORY`. This baseline is mainly a reference point, it ignores where the outage happens , when it happens, and more detailed cause information, which are all likely related to restoration time.
 
 
-### Final Model
+## Final Model
 
-[TODO: Implement final model]
-Requirements to satisfy:
-
-Add at least 2 feature engineering steps (beyond just one-hot)
-Perform hyperparameter search (e.g., GridSearchCV)
-Keep everything in a single sklearn Pipeline
-Compare on the same train/test split used in baseline
-[TODO: Provide final MAE and explain why the added features should help.]
+Our final model is a **regularized linear regression (Ridge)** model implemented as a single scikit-learn **Pipeline**. One-hot encode several categorical features (e.g., region and cause fields), the design matrix becomes high-dimensional. Ridge regression adds L2 regularization, which stabilizes coefficients and helps reduce overfitting while remaining efficient and interpretable. Compared to the baseline model (which only used `CUSTOMERS.AFFECTED` and `CAUSE.CATEGORY`), we expanded the feature set and added multiple feature engineering steps to capture geographic and timing-related patterns that may influence outage duration. 
 
 ### Features used
 In addition to the baseline features, the final model includes:
@@ -182,9 +175,6 @@ We engineered extra features to make the model more robust and informative:
 - **Log transform:** `LOG_CUSTOMERS_AFFECTED = log1p(CUSTOMERS.AFFECTED)` to reduce skew and limit the influence of extremely large outages.
 - **Time-derived features:** `SEASON` (from `MONTH`), `START_HOUR` (from `OUTAGE.START.TIME`), and `START_DOW` (from `OUTAGE.START.DATE`) to capture systematic duration differences by timing.
 - **Missingness handling:** numeric columns were imputed with the median and we added **missingness indicators** (`SimpleImputer(..., add_indicator=True)`) so the model can learn patterns related to missing values instead of dropping rows.
-
-### Why Ridge?
-Because we one-hot encode several categorical features (e.g., region and cause fields), the design matrix becomes **high-dimensional**. Ridge regression adds **L2 regularization**, which stabilizes coefficients and helps reduce overfitting while remaining efficient and interpretable.
 
 ### Hyperparameter tuning (GridSearchCV)
 We used `GridSearchCV` (3-fold cross-validation) to tune:
