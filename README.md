@@ -84,7 +84,7 @@ A column Z that missingness does not depend on: [TODO]
 
 Interactive plot (Plotly) related to missingness
 [TODO: export Plotly HTML to assets/missingness_plot.html and embed below]
-<iframe src="assets/missingness_plot.html" width="100%" height="520" style="border:none;"></iframe>
+<iframe src="assets/missingness_dep_on_cause_category.html" width="100%" height="520" style="border:none;"></iframe>
 
 
 
