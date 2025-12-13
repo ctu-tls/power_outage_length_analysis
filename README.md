@@ -113,11 +113,11 @@ Do outages caused by **severe weather** tend to have different average duration 
 - **Test statistic:** difference in mean outage duration  
 - **Method:** permutation test (shuffle group labels)
 - **Repetitions (reps):** **5000**
-- **Significance level (α):** **0.05**  
+- **Significance level (α):** **0.05**
 
 ### Results
-- **Observed difference in means (Δ):** **[PASTE_YOUR_OBSERVED_DIFF_HERE]**
-- **p-value:** **0.0002**
+- **Observed difference in means (Δ = mean duration(severe weather) − mean duration(non-severe)): 2537.81 minutes**
+- **p-value:** **0.0002** (0.0001999600079984003)
  
 
 ### Conclusion
@@ -142,7 +142,9 @@ However, we did **not** assume that post-event outcomes are known at prediction 
 ##### Features
 
 Quantitative: CUSTOMERS.AFFECTE
-Categorical: CAUSE.CATEGORY (one-hot encoded)## Baseline Model
+Categorical: CAUSE.CATEGORY (one-hot encoded)
+
+## Baseline Model
 
 ### Features
 - Quantitative: `CUSTOMERS.AFFECTED`
@@ -158,16 +160,38 @@ Baseline test MAE: **2472.27** minutes.
 Our baseline MAE is **2472.27 minutes**, meaning our predictions are off by about **2,472 minutes** on average. That’s pretty large, which tells us that outage duration varies a lot and can’t be explained well with only `CUSTOMERS.AFFECTED` and the broad `CAUSE.CATEGORY`. This baseline is mainly a reference point, it ignores where the outage happens , when it happens, and more detailed cause information, which are all likely related to restoration time.
 
 
-### Final Model
+## Final Model
 
-[TODO: Implement final model]
-Requirements to satisfy:
+Our final model is a **regularized linear regression (Ridge)** model implemented as a single scikit-learn **Pipeline**. One-hot encode several categorical features (e.g., region and cause fields), the design matrix becomes high-dimensional. Ridge regression adds L2 regularization, which stabilizes coefficients and helps reduce overfitting while remaining efficient and interpretable. Compared to the baseline model (which only used `CUSTOMERS.AFFECTED` and `CAUSE.CATEGORY`), we expanded the feature set and added multiple feature engineering steps to capture geographic and timing-related patterns that may influence outage duration. 
 
-Add at least 2 feature engineering steps (beyond just one-hot)
-Perform hyperparameter search (e.g., GridSearchCV)
-Keep everything in a single sklearn Pipeline
-Compare on the same train/test split used in baseline
-[TODO: Provide final MAE and explain why the added features should help.]
+### Features used
+In addition to the baseline features, the final model includes:
+- `CAUSE.CATEGORY.DETAIL`, `CLIMATE.REGION`, `NERC.REGION`, `U.S._STATE`
+- `ANOMALY.LEVEL`, `YEAR`, `MONTH`
+- `OUTAGE.START.DATE`, `OUTAGE.START.TIME`
+
+### Feature engineering
+We engineered extra features to make the model more robust and informative:
+- **Log transform:** `LOG_CUSTOMERS_AFFECTED = log1p(CUSTOMERS.AFFECTED)` to reduce skew and limit the influence of extremely large outages.
+- **Time-derived features:** `SEASON` (from `MONTH`), `START_HOUR` (from `OUTAGE.START.TIME`), and `START_DOW` (from `OUTAGE.START.DATE`) to capture systematic duration differences by timing.
+- **Missingness handling:** numeric columns were imputed with the median and we added **missingness indicators** (`SimpleImputer(..., add_indicator=True)`) so the model can learn patterns related to missing values instead of dropping rows.
+
+### Hyperparameter tuning (GridSearchCV)
+We used `GridSearchCV` (3-fold cross-validation) to tune:
+- `model__alpha ∈ {0.1, 1, 10, 100, 300}`
+- `model__fit_intercept ∈ {True, False}`
+
+The best-performing hyperparameters were:
+- **alpha = 300**
+- **fit_intercept = False**
+
+### Performance and comparison to baseline
+Using the **same train/test split** as the baseline model:
+- **Baseline MAE:** 2472.27 minutes  
+- **Final model MAE:** 2440.28 minutes  
+
+This is an improvement of about **32 minutes lower MAE** (≈ **1.29%** better). The improvement is modest, which is reasonable since outage duration can be influenced by many unobserved factors (repair logistics, infrastructure condition, and real-time response).
+
 
 ## Fairness Analysis
 
